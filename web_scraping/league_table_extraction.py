@@ -33,7 +33,7 @@ for season in seasons:
             print(f"Failed to retrieve data from {full_url}. Skipping...")
             continue
 
-        # Rest of your code for parsing the HTML content and creating the dataframe
+
         soup = BeautifulSoup(html_content, "html.parser")
         table = soup.find_all("table")[1]
         headers = [th.text.strip() for th in table.find_all("th")]
