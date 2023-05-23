@@ -88,7 +88,7 @@ def get_league_data():
 
             # Create a DataFrame from the extracted data
             df = pd.DataFrame(rows, columns=headers)
-            df = df.drop('', axis=1)  # managing conflict
+            # df = df.drop('', axis=1)  # managing conflict
 
             df.insert(2, "Season", f'{season}-{season + 1}')
             df.insert(1, "League", league)
