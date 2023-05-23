@@ -26,8 +26,8 @@ def get_league_data():
 
     all_tables = []  # List to store all the tables
 
-    for season in seasons:
-        for url, league_name in leagues:
+    for url, league_name in leagues:
+        for season in seasons:
             full_url = f"{url}{season}"
             retries = 0
             success = False
@@ -48,7 +48,17 @@ def get_league_data():
                 continue
 
             soup = BeautifulSoup(html_content, "html.parser")
+
             league = soup.find('h1').text.strip()
+            # Define the regex pattern to extract the league name
+            pattern = r"Table\s(.+?)\s\d+/\d+"
+
+            # Use regex to find the league name in the string
+            match = re.search(pattern, league)
+
+            if match:
+                league_name = match.group(1)
+                league = league_name
 
             # Find the table containing the data
             table = soup.find_all("table")[1]
@@ -58,6 +68,7 @@ def get_league_data():
             headers.insert(1, '')
             headers[3] = 'Matches'
             headers[0] = 'Rank'
+            headers[8] = 'Goal difference'
 
             rows = []
             team_ids = []
@@ -77,8 +88,9 @@ def get_league_data():
 
             # Create a DataFrame from the extracted data
             df = pd.DataFrame(rows, columns=headers)
-            # df = df.drop('', axis=1) # managing conflict
-            df.insert(2, "Season", f'{season}/{season + 1}')
+            df = df.drop('', axis=1)  # managing conflict
+
+            df.insert(2, "Season", f'{season}-{season + 1}')
             df.insert(1, "League", league)
             df.insert(3, "club_id", team_ids)
 
@@ -90,4 +102,7 @@ def get_league_data():
     return merged_df
 
 
-get_league_data()
+# get_league_data()
+data = get_league_data()
+# Save the data to a JSON file
+data.to_json('league_data.json', orient='records', indent=4)
