@@ -2,10 +2,12 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import json
+import numpy as np
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}
 
-leagues = ['premier-league','la-liga','serie-a','bundesliga','ligue-1']
+leagues = [['ligue-1','FR1'],['premier-league','GB1'],['la-liga','ES1'],['bundesliga','L1'],['serie-a','IT1']]
+
 
 #/juventus-turin/startseite/verein/506/saison_id/2021
 pattern = r"\/verein\/(\d+)\/saison_id\/\d+"
@@ -16,14 +18,14 @@ res_teams = []
 
 for league in leagues :
     for year in range(2015,2022):
-        url = f'https://www.transfermarkt.us/{league}/startseite/wettbewerb/GB1/plus/?saison_id={year}'
+        
+        url = f'https://www.transfermarkt.com/{league[0]}/startseite/wettbewerb/{league[1]}/plus/?saison_id={year}'
         page = requests.get(url,headers=HEADERS).text
         soup = BeautifulSoup(page,'html.parser')
         teams = soup.select('#yw1 .no-border-links a:nth-child(1)')
         for count,team in enumerate(teams):
             data_team = {}
-
-            url = f'https://www.transfermarkt.us'+team.get('href')
+            url = f'https://www.transfermarkt.com'+team.get('href')
             page = requests.get(url,headers=HEADERS).text
             soup = BeautifulSoup(page,'html.parser')
             match = re.search(pattern, url)
@@ -31,7 +33,7 @@ for league in leagues :
                 team_id = match.group(1)
                 data_team['id'] = int(team_id)
             data_team['year'] = f'{year}/{year+1}'
-            data_team['league'] = f'{league}'
+            data_team['league'] = f'{league[0]}'
             data_team['team_name'] = team.get('title')
             cups = soup.select('.data-header__success-image')
             cups_num = soup.select('.data-header__success-number')
@@ -39,8 +41,13 @@ for league in leagues :
             cups_num_list = [num.text for num in cups_num]
             data_team['cups'] = [[value,int(num_value)] for value,num_value in zip(cups_list,cups_num_list)]
             data_team['national_team_players'] = int(soup.select('.data-header__label:nth-child(1) a')[0].text)
-            market = soup.select('.data-header__market-value-wrapper')[0]
-            data_team['market_value'] = market.find('span').string + market.find('span').find_next_sibling(text=True) + market.find('span').find_next_sibling('span').string
+            try :
+                market = soup.select('.data-header__market-value-wrapper')[0]
+                data_team['market_value'] = market.find('span').string + market.find('span').find_next_sibling(string=True) + market.find('span').find_next_sibling('span').string
+            except:
+                market = np.nan
+                data_team['market_value'] = market
+            
             data_team['average_age'] = float(soup.select('.data-header__items:nth-child(1) .data-header__label:nth-child(2) .data-header__content')[0].text)
             players = soup.select('.nowrap a')
             players_link_list = [player.get('href') for player in players]
