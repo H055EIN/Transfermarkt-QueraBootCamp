@@ -55,17 +55,9 @@ class Team(Base):
     __tablename__ = "team"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-<<<<<<< HEAD
     team_name: Mapped[str] = mapped_column(String(64))
     market_value: Mapped[Optional[float]] = mapped_column(Float,nullable=True)
     average_age: Mapped[float] = mapped_column(Float)
-
-    playerstats:Mapped[List["PlayerStat"]] = relationship(back_populates="team")
-    players:Mapped[List["Player"]] = relationship(back_populates="team")
-    teamstats:Mapped[List["TeamStat"]] = relationship(back_populates="team")
-    achievements:Mapped[List["Achievement"]] = relationship(back_populates="team")
-    
-=======
     team_name: Mapped[str] = mapped_column(String(255))
     market_value: Mapped[float] = mapped_column(Float, nullable=True)
     # average_age: Mapped[float] = mapped_column(Float, nullable=True)
@@ -74,7 +66,11 @@ class Team(Base):
     teamstats: Mapped["TeamStat"] = relationship('TeamStat', back_populates="team")
     achievements: Mapped["Achievement"] = relationship('Achievement', back_populates="team")
 
->>>>>>> 9e85c7865df3c6a69d3bfd4ad9cd785bdd5494c1
+    playerstats:Mapped["PlayerStat"] = relationship(back_populates="team")
+    players:Mapped["Player"] = relationship(back_populates="team")
+    teamstats:Mapped["TeamStat"] = relationship(back_populates="team")
+    achievements:Mapped["Achievement"] = relationship(back_populates="team")
+    
 
 def __repr__(self):
     return f"Team(id={self.id}, team_name='{self.team_name}', market_value={self.market_value}, average_age={self.average_age})"
@@ -119,7 +115,6 @@ class Achievement(Base):
 class Transfer(Base):
     __tablename__ = "transfer"
 
-<<<<<<< HEAD
     id:Mapped[int] = mapped_column(Integer,primary_key=True)
     season_id:Mapped[int] = mapped_column(ForeignKey("season.id"))
     player_id:Mapped[int] = mapped_column(ForeignKey("player.id"))
@@ -129,10 +124,6 @@ class Transfer(Base):
     fee:Mapped[float] = mapped_column(Float)
     joined:Mapped[str] = mapped_column(String(64))
     left:Mapped[str] = mapped_column(String(64))
-
-    player:Mapped["Player"] = relationship(back_populates="transfers")
-    season:Mapped["Season"] = relationship(back_populates="transfers")
-=======
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     season_id: Mapped[int] = mapped_column(ForeignKey("season.id"))
     player_id: Mapped[int] = mapped_column(ForeignKey("player.id"))
@@ -142,8 +133,9 @@ class Transfer(Base):
     fee: Mapped[float] = mapped_column(Float)
     joined: Mapped[str] = mapped_column(String(64))
     left: Mapped[str] = mapped_column(String(64))
->>>>>>> 9e85c7865df3c6a69d3bfd4ad9cd785bdd5494c1
 
+    player:Mapped["Player"] = relationship(back_populates="transfers")
+    season:Mapped["Season"] = relationship(back_populates="transfers")
     player: Mapped["Player"] = relationship(back_populates="transfers")
     season: Mapped["Season"] = relationship(back_populates="transfers")
 
@@ -212,7 +204,6 @@ class PlayerStat(Base):
     minutes_per_goal: Mapped[int] = mapped_column(Integer)
     minutes_play: Mapped[int] = mapped_column(Integer)
 
-<<<<<<< HEAD
     team:Mapped["Team"] = relationship(back_populates="playerstats")
     player:Mapped["Player"] = relationship(back_populates="playerstats")
     competition:Mapped["Competition"] = relationship(back_populates="playerstats")
@@ -231,12 +222,11 @@ class Season(Base):
     teamstats:Mapped[List["TeamStat"]] = relationship(back_populates="season")
     transfers:Mapped[List["Transfer"]] = relationship(back_populates="season")
     
-=======
     team: Mapped["Team"] = relationship(back_populates="player_stat")
     player: Mapped["Player"] = relationship(back_populates="player_stat")
     competition: Mapped["Competition"] = relationship(back_populates="player_stat")
     season: Mapped["Season"] = relationship(back_populates="player_stat")
->>>>>>> 9e85c7865df3c6a69d3bfd4ad9cd785bdd5494c1
+
 
 
 class TeamStat(Base):
