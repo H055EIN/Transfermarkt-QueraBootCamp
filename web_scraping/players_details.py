@@ -20,7 +20,7 @@ def player_crawler(url):
     page = requests.get(url,headers=HEADERS).text
     soup = BeautifulSoup(page,'html.parser')
     #Name
-    player_keys = ['Player_ID','Name','Date of birth','Place of birth','Age','Height',
+    player_keys = ['Player_ID','Name','Team_ID','Date of birth','Place of birth','Age','Height',
                  'Citizenship','Position','Foot','Nationality','Caps','Goals',
                 'Current club','Joined','Outfitter','Main position','Other position',
                 'Current market value','Highest market value']
@@ -39,6 +39,12 @@ def player_crawler(url):
         records['Nationality'] = cleaner(soup.select("#main > main > header > div.data-header__info-box > div > ul:nth-child(3) > li:nth-child(1) > span > a")[0].text)
     except:
         pass
+    try:
+        match = re.search(r'/(\d+)$', soup.select('.data-header__club a')[0].get('href'))
+        if match:
+            records['Team_ID'] = match.group(1)            
+    except:
+        records['Team_ID'] = -1
     titles = []
     for item in soup.select(".info-table__content--regular"):
         titles.append(cleaner(item.text).strip())
