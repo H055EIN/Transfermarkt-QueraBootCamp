@@ -23,26 +23,34 @@ with open('..\\web_scraping\\teams.json') as f:
 unique_team_ids = set()
 for entry in data:
     team_id = entry["id"]
-    query = select(Team).filter_by(id=team_id)
-    existing_team = session.scalars(query).first()
+    if team_id in unique_team_ids:
+        continue
+    unique_team_ids.add(team_id)
+    # try:
+    #     average_age = float(entry["average_age"].strip())
+    # except ValueError:
+    #     print(repr(entry["average_age"]))
+    #     print(team_id)
+    #     exit(1)
+    market_value = entry["market_value"]
 
-    if existing_team is None:
-        average_age = entry["average_age"].strip()
-        market_value = entry["market_value"]
-        if isinstance(market_value, str):
-            market_value = market_value.replace('€', '').replace('m', '')
+    if isinstance(market_value, str):
+        if market_value.endswith('m'):
+            market_value = float(market_value[1:-1].strip())
         else:
-            market_value = None
+            market_value = float(market_value[1:-2].strip())
+    else:
+        market_value = None
 
-        team = Team(
-            id=team_id,
-            team_name=entry["team_name"],
-            market_value=market_value,
-            average_age=average_age
-        )
+    steam = Team(
+        id=team_id,
+        team_name=entry["team_name"],
+        market_value=market_value,
+        # average_age=average_age
+    )
 
-        # Add the team to the session
-        session.add(team)
+    # Add the team to the session
+    session.add(steam)
 
 # Commit the changes to the database
 session.commit()
