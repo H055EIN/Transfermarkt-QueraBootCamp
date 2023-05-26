@@ -2,7 +2,7 @@ import json
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import select
-from model import Team
+from model import Team,Competition
 
 DB_NAME = 'Transfermarkt_database'
 
@@ -40,6 +40,8 @@ for entry in data:
             market_value=market_value,
             average_age=average_age
         )
+
+        
 
         # Add the team to the session
         session.add(team)
