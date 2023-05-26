@@ -18,9 +18,9 @@ engine = create_engine(url_object)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-with open('..\\web_scraping\\teams.json', 'r') as f:
+with open('..\\web_scraping\\teams.json') as f:
     data = json.load(f)
-
+unique_team_ids = set()
 for entry in data:
     team_id = entry["id"]
     query = select(Team).filter_by(id=team_id)
