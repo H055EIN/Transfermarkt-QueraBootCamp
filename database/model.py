@@ -198,7 +198,7 @@ class TeamStat(Base):
     goals: Mapped[str] = mapped_column(String(32))
     goal_differenece: Mapped[int] = mapped_column(Integer)
     pts: Mapped[int] = mapped_column(Integer)
-    rank = Mapped[int] = mapped_column(Integer)
+    rank : Mapped[int] = mapped_column(Integer)
     
     team: Mapped["Team"] = relationship(back_populates="teams_stats")
     season: Mapped["Season"] = relationship(back_populates="teams_stats")
